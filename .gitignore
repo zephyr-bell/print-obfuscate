@@ -1,0 +1,7 @@
+# 忽略所有文件
+*
+
+# 但保留特定文件（白名单）
+!.gitignore
+!print_script.js
+!disPrint.py
