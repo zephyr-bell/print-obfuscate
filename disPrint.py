@@ -2,13 +2,14 @@ import sys
 from pathlib import Path
 import re
 import base64
+import random
 
 def get_script(mode='pc'):
     js_path = Path(__file__).parent / 'print_script.js'
     js = open(js_path, encoding='utf-8').read()
     
     if mode == 'mobile':
-        return f'<script>{js};enableObfuscate();cleanOnly();</script>'
+        return f'<script>{js};enableObfuscateMobile();</script>'
     else:
         return f'<script>{js};enableObfuscate();</script>'
 
@@ -20,6 +21,46 @@ def embed_images(html, base_dir):
             html = html.replace(f'src="{src[0]}"', f'src="data:image/{src[1]};base64,{b64}"')
     return html
 
+def encode_chinese(html, shift=7):
+    """
+    对 HTML 中的中文字符做位移编码
+    保留标签、属性、script、style 不变
+    """
+    def encode_text(text):
+        chars = list(text)
+        for i, ch in enumerate(chars):
+            code = ord(ch)
+            if 0x4e00 <= code <= 0x9fff:
+                new_code = ((code - 0x4e00 + shift) % 0x4e00) + 0x4e00
+                chars[i] = chr(new_code)
+        return ''.join(chars)
+
+    # 保护 script 和 style 内容
+    script_style_pattern = r'(<(script|style)[^>]*>.*?</\2>)'
+    protected_blocks = []
+    
+    def protect(match):
+        protected_blocks.append(match.group(0))
+        return f'__PROTECT_{len(protected_blocks)-1}__'
+    
+    html = re.sub(script_style_pattern, protect, html, flags=re.DOTALL | re.IGNORECASE)
+    
+    # 对标签之间的文本进行编码
+    pattern = r'(?<=>)([^<]+)(?=<)'
+    def replace_text(match):
+        text = match.group(0)
+        if text.strip():
+            return encode_text(text)
+        return text
+    
+    html = re.sub(pattern, replace_text, html)
+    
+    # 恢复保护的块
+    for i, block in enumerate(protected_blocks):
+        html = html.replace(f'__PROTECT_{i}__', block)
+    
+    return html
+
 def process(input_path):
     path = Path(input_path)
     if not path.exists():
@@ -29,14 +70,17 @@ def process(input_path):
     html = open(path, encoding='utf-8').read()
     html = embed_images(html, path.parent)
     
-    # 添加隐藏保护 CSS（JS 不执行时页面不可见）
+    # 第一层：中文字符位移编码（固定偏移 7，与 JS 一致）
+    html = encode_chinese(html, shift=7)
+    
+    # 隐藏保护 CSS（JS 不执行时页面不可见）
     hidden_css = '<style>html{visibility:hidden}</style>'
     if '<head>' in html:
         html = html.replace('<head>', '<head>' + hidden_css)
     else:
         html = '<head>' + hidden_css + '</head>' + html
     
-    # 生成电脑版
+    # 生成 PC 版
     script_pc = get_script('pc')
     html_pc = html.replace('</body>', script_pc + '\n</body>') if '</body>' in html else html + script_pc
     out_pc = path.parent / f'{path.stem}_PC{path.suffix}'
