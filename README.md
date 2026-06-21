@@ -1,4 +1,3 @@
-```markdown
 # HTML Print Obfuscator
 
 注入打印混淆脚本，防止 HTML 被随意打印传播。
