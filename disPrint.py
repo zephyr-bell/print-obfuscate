@@ -1,8 +1,6 @@
-import sys
 from pathlib import Path
 import re
 import base64
-import random
 
 def get_script(mode='pc'):
     js_path = Path(__file__).parent / 'print_script.js'
