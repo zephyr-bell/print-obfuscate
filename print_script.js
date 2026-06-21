@@ -28,13 +28,6 @@ function decodeChinese(node) {
     }
 }
 
-// ============ 清洁功能 ============
-function cleanOnly() {
-    var style = document.createElement('style');
-    style.textContent = '.katex .katex-html { display: none; } .katex .katex-mathml { display: inline-block; }';
-    document.head.appendChild(style);
-}
-
 // ============ 混淆功能 ============
 function enableObfuscate() {
     (function() {
@@ -169,12 +162,6 @@ function enableObfuscate() {
             }
         });
     })();
-}
-
-// ============ 移动版 ============
-function enableObfuscateMobile() {
-    cleanOnly();
-    enableObfuscate();
 }
 
 // ============ 页面加载解码 ============
