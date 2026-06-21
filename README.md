@@ -4,19 +4,20 @@
 
 ## 背景
 
-- VSCode 的 Markdown Preview Enhanced 插件导出的 HTML 存在以下问题：
-  - 图片引用本地路径，分享后无法显示
-  - KaTeX CSS 依赖 CDN，无网络时公式样式丢失
-  - 内容可随意打印和复制传播
-- 本工具旨在解决上述问题，输出单文件 HTML。
+VSCode 的 Markdown Preview Enhanced 插件导出的 HTML 存在以下问题：
+- 图片引用本地路径，分享后无法显示
+- KaTeX CSS 依赖 CDN，无网络时公式样式丢失
+- 内容可随意打印和复制传播
+
+本工具旨在解决上述问题，输出单文件 HTML。
 
 ## 内嵌功能
 
 ### 图片内嵌
-- 自动扫描 HTML 中所有图片引用（png/jpg/jpeg/gif），转换为 Base64 内联，无需携带外部图片文件。
+自动扫描 HTML 中所有图片引用（png/jpg/jpeg/gif），转换为 Base64 内联，无需携带外部图片文件。
 
 ### KaTeX CSS 内嵌
-- 自动检测同目录下的 `katex.min.css` 文件，移除外链并内联到 `<head>` 中，确保公式样式在任何网络环境下正常显示。
+自动检测同目录下的 `katex.min.css` 文件，移除外链并内联到 `<head>` 中，确保公式样式在任何网络环境下正常显示。
 
 ## 混淆功能
 
@@ -28,10 +29,11 @@
 
 ```bash
 python disPrint.py
-# 输入 HTML 文件路径
 ```
 
-输出 `xxx_OB.html`，单文件即可使用。
+根据提示输入 HTML 文件路径。
+
+**可选参数：** 在路径末尾加 `-p` 可禁用混淆，输出 `_O.html`（仅内嵌资源，不编码中文）。
 
 ## 文件
 
