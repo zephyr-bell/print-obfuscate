@@ -13,10 +13,8 @@ function decodeChinese(node) {
             var chars = text.split('');
             for (var i = 0; i < chars.length; i++) {
                 var code = chars[i].charCodeAt(0);
-                if (code >= 0x4e00 && code <= 0x9fff) {
-                    var newCode = code - SHIFT;
-                    if (newCode < 0x4e00) newCode += 0x4e00;
-                    chars[i] = String.fromCharCode(newCode);
+                if (code >= 0x4e00 && code <= 0x9fff + SHIFT) {
+                    chars[i] = String.fromCharCode(code - SHIFT);
                 }
             }
             node.textContent = chars.join('');
@@ -167,7 +165,6 @@ function enableObfuscate() {
 // ============ 页面加载解码 ============
 function init() {
     decodeChinese(document.documentElement);
-    document.documentElement.style.visibility = 'visible';
 }
 
 if (document.readyState === 'loading') {

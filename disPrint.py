@@ -42,7 +42,7 @@ def encode_chinese(html, shift=7):
         for i, ch in enumerate(chars):
             code = ord(ch)
             if 0x4e00 <= code <= 0x9fff:
-                chars[i] = chr(((code - 0x4e00 + shift) % 0x4e00) + 0x4e00)
+                chars[i] = chr(code + shift)
         return ''.join(chars)
 
     # 保护 script/style
@@ -73,10 +73,7 @@ def get_script():
 
 
 def inject_obfuscate(html):
-    """注入隐藏 CSS 和混淆脚本"""
-    # 隐藏 CSS
-    html = html.replace('<head>', '<head><style>html{visibility:hidden}</style>')
-    # 注入脚本
+    """注入混淆脚本"""
     html = html.replace('</body>', get_script() + '\n</body>')
     return html
 
