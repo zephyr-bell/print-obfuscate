@@ -99,7 +99,7 @@ def process_html(html, base_dir=None, obfuscate=True):
     html = inline_katex_css(html)
     if obfuscate:
         html = encode_chinese(html)
-    html = inject_obfuscate(html)
+        html = inject_obfuscate(html)
     return html
 
 
